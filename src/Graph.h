@@ -244,8 +244,8 @@ Vertex<T, A>* Graph<T, A>::getVertex(const T &v) const {
 template<class T, class A>
 Vertex<T, A>* Graph<T, A>::getVertex(const A &v) const {
 	for (unsigned int i = 0; i < vertexSet.size(); i++)
-		for(int j=0; j < vertexSet[i]->getAdj().size; j++)
-			if (vertexSet[i]->getAdj[j].getEdgeInfo() == v)
+		for(int j=0; j < vertexSet[i]->getAdj().size(); j++)
+			if (vertexSet[i]->getAdj()[j].getEdgeInfo() == v)
 			return vertexSet[i];
 	return NULL;
 }
