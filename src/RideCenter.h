@@ -137,6 +137,8 @@ public:
  */
 	Vertex<Node,Road>* findVertex(Node n) const;
 
+	Vertex<Node,Road>* findVertex(Road n) const;
+
 };
 
 
