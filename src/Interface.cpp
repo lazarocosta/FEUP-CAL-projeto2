@@ -64,73 +64,113 @@ void Interface::displayUsers() {
 
 void Interface::newUser() {
 
-	string name;
+	string name, selectMode;
 	int age, i = 0, numP;
 	Node N;
 	unsigned long ID;
 	Vertex<Node, Road> *start;
 	Vertex<Node, Road> *end;
+	bool selectAdressByRoad = true;
 
 	name = returnInput("Name: ", "Introduce a valid name");
 
 	age = returnInt("Age: ");
 
-	while (true) {
-		if (i == 0) {
-			cout << "What is the ID of your Adress: ";
-			i++;
-		} else
-			cout << "ID invalid, new ID again:";
-
-		cin >> ID;
-
-		cin.clear();
-		cin.ignore(1000, '\n');
-		if ((start = findPlace(Node(ID))) != NULL) {
-			cout << "Node found! " << endl;
-			break;
-		}
+	while (selectMode != "road" && selectMode != "node") {
+		cout << "Choose adress by road or node ? [road/node]" << endl;
+		cin >> selectMode;
 	}
 
-	Adress aInit;
-	if (start->getAdj().size() == 0)
-		aInit = Adress(start->getInfo(), Road(0, "", false));
-	else
-		aInit = Adress(start->getInfo(), start->getAdj()[0].getEdgeInfo());
+	if (selectMode == "node")
+		selectAdressByRoad = false;
 
-	string choice;
+	if (selectAdressByRoad) {
 
-	while (choice != "yes" && choice != "no") {
-		cout << "Want to go somewhere ? [yes/no]" << endl;
-		cin >> choice;
-	}
-
-	string hI;
-	string hF;
-
-	if (choice == "yes") {
-		i = 0;
-
+		string RoadInitial, RoadFinaly;
 		while (true) {
-			std::cin.clear();
-			std::cin.ignore(1000, '\n');
-			hI = returnInput("Hour to departure ?", "Introduce a valid hour");
-			std::cin.clear();
-			std::cin.ignore(1000, '\n');
-			hF = returnInput("Hour to arrive ?", "Introduce a valid hour");
 
-			if (hF > hI)
+			RoadInitial = returnInput("What is the Road initial?",
+					"Introduce a valid name.");
+
+			if ((start = findRoad(RoadInitial)) != NULL) {
+				cout << "Road Found!" << endl;
 				break;
-			else
-				cout << "Not a possible choice. Please choose the hours again."
-						<< endl;
+
+			} else
+				cout << "Invalid information. Please try again." << endl;
 		}
 
-		numP = returnInt("How many passengers can you transport ?");
+		Adress aInit;
+		if (start->getAdj().size() == 0)
+			aInit = Adress(start->getInfo(), Road(0, "", false));
+		else
+			aInit = Adress(start->getInfo(), start->getAdj()[0].getEdgeInfo());
 
+		string choice;
+
+		while (choice != "yes" && choice != "no") {
+			cout << "Want to go somewhere ? [yes/no]" << endl;
+			cin >> choice;
+		}
+
+		string hI;
+		string hF;
+
+		if (choice == "yes") {
+			i = 0;
+
+			while (true) {
+				std::cin.clear();
+				std::cin.ignore(1000, '\n');
+				hI = returnInput("Hour to departure ?",
+						"Introduce a valid hour");
+				std::cin.clear();
+				std::cin.ignore(1000, '\n');
+				hF = returnInput("Hour to arrive ?", "Introduce a valid hour");
+
+				if (hF > hI)
+					break;
+				else
+					cout
+							<< "Not a possible choice. Please choose the hours again."
+							<< endl;
+			}
+
+			numP = returnInt("How many passengers can you transport ?");
+
+			while (true) {
+				RoadFinaly = returnInput("What is the final Road?",
+						"Introduce a valid name.");
+
+				if ((end = findRoad(RoadFinaly)) != NULL) {
+					cout << "Road Found!" << endl;
+					break;
+
+				} else
+					cout << "Invalid information. Please try again." << endl;
+			}
+
+			Adress aDest;
+			if (end->getAdj().size() == 0)
+				aDest = Adress(end->getInfo(), Road(0, "", false));
+			else
+				aDest = Adress(end->getInfo(), end->getAdj()[0].getEdgeInfo());
+
+			User *u = new User(name, age, aInit, aDest, numP);
+			u->setHoraInit(hI);
+			u->setHoraFim(hF);
+
+			users.push_back(u);
+		} else {
+			User *u = new User(name, age, aInit);
+
+			users.push_back(u);
+		}
+
+	} else {
 		while (true) {
 			if (i == 0) {
-				cout << "What is the ID Destination: ";
+				cout << "What is the ID of your Adress: ";
 				i++;
 			} else
 				cout << "ID invalid, new ID again:";
@@ -139,29 +179,86 @@ void Interface::newUser() {
 
 			cin.clear();
 			cin.ignore(1000, '\n');
-			if ((end = findPlace(Node(ID))) != NULL) {
-				if (center.SourcDestConectedDFS(start->getInfo(),
-						end->getInfo()))
-					cout << "Node found! " << endl;
+			if ((start = findPlace(Node(ID))) != NULL) {
+				cout << "Node found! " << endl;
 				break;
 			}
 		}
 
-		Adress aDest;
-		if (end->getAdj().size() == 0)
-			aDest = Adress(end->getInfo(), Road(0, "", false));
+		Adress aInit;
+		if (start->getAdj().size() == 0)
+			aInit = Adress(start->getInfo(), Road(0, "", false));
 		else
-			aDest = Adress(end->getInfo(), end->getAdj()[0].getEdgeInfo());
+			aInit = Adress(start->getInfo(), start->getAdj()[0].getEdgeInfo());
 
-		User *u = new User(name, age, aInit, aDest, numP);
-		u->setHoraInit(hI);
-		u->setHoraFim(hF);
+		string choice;
 
-		users.push_back(u);
-	} else {
-		User *u = new User(name, age, aInit);
+		while (choice != "yes" && choice != "no") {
+			cout << "Want to go somewhere ? [yes/no]" << endl;
+			cin >> choice;
+		}
 
-		users.push_back(u);
+		string hI;
+		string hF;
+
+		if (choice == "yes") {
+			i = 0;
+
+			while (true) {
+				std::cin.clear();
+				std::cin.ignore(1000, '\n');
+				hI = returnInput("Hour to departure ?",
+						"Introduce a valid hour");
+				std::cin.clear();
+				std::cin.ignore(1000, '\n');
+				hF = returnInput("Hour to arrive ?", "Introduce a valid hour");
+
+				if (hF > hI)
+					break;
+				else
+					cout
+							<< "Not a possible choice. Please choose the hours again."
+							<< endl;
+			}
+
+			numP = returnInt("How many passengers can you transport ?");
+
+			while (true) {
+				if (i == 0) {
+					cout << "What is the ID Destination: ";
+					i++;
+				} else
+					cout << "ID invalid, new ID again:";
+
+				cin >> ID;
+
+				cin.clear();
+				cin.ignore(1000, '\n');
+				if ((end = findPlace(Node(ID))) != NULL) {
+					if (center.SourcDestConectedDFS(start->getInfo(),
+							end->getInfo()))
+						cout << "Node found! " << endl;
+					break;
+				}
+			}
+
+			Adress aDest;
+			if (end->getAdj().size() == 0)
+				aDest = Adress(end->getInfo(), Road(0, "", false));
+			else
+				aDest = Adress(end->getInfo(), end->getAdj()[0].getEdgeInfo());
+
+			User *u = new User(name, age, aInit, aDest, numP);
+			u->setHoraInit(hI);
+			u->setHoraFim(hF);
+
+			users.push_back(u);
+		} else {
+			User *u = new User(name, age, aInit);
+
+			users.push_back(u);
+		}
+
 	}
 
 	displayMenu();
@@ -189,6 +286,9 @@ void Interface::defineUserDeparture() {
 	Vertex<Node, Road> *v;
 	unsigned long ID;
 	int j = 0;
+	bool selectAdressByRoad = true;
+	string selectMode;
+	string RoadFinaly;
 
 	while (flag) {
 		name = returnInput("What is the user name ?",
@@ -208,18 +308,42 @@ void Interface::defineUserDeparture() {
 				users[i]->setHoraInit(hI);
 				users[i]->setHoraFim(hF);
 
-				while (true) {
-					cin.ignore(1000);
-					if (j == 0) {
-						cout << "What is the ID of your destiny adress: ";
-						j++;
-					} else {
-						cout << "ID invalid, new ID again:";
-					}
-					cin >> ID;
+				while (selectMode != "road" && selectMode != "node") {
+					cout << "Choose adress by road or node ? [road/node]"
+							<< endl;
+					cin >> selectMode;
+				}
 
-					if ((v = findPlace(Node(ID))) != NULL)
-						break;
+				if (selectMode == "node")
+					selectAdressByRoad = false;
+
+				if (selectAdressByRoad) {
+					while (true) {
+						RoadFinaly = returnInput("What is the final Road?",
+								"Introduce a valid name.");
+
+						if ((v = findRoad(RoadFinaly)) != NULL) {
+							cout << "Road Found!" << endl;
+							break;
+
+						} else
+							cout << "Invalid information. Please try again."
+									<< endl;
+					}
+				} else {
+					while (true) {
+						cin.ignore(1000);
+						if (j == 0) {
+							cout << "What is the ID of your destiny adress: ";
+							j++;
+						} else {
+							cout << "ID invalid, new ID again:";
+						}
+						cin >> ID;
+
+						if ((v = findPlace(Node(ID))) != NULL)
+							break;
+					}
 				}
 
 				cout << v->getInfo().getID() << " | "
@@ -304,9 +428,9 @@ Vertex<Node, Road> *Interface::findPlace(Node n) const {
 	return center.findVertex(n);
 }
 
-Vertex<Node, Road> *Interface::findRoad(Road r) const {
+Vertex<Node, Road> *Interface::findRoad(string name) const {
 
-	return center.findVertex(r);
+	return center.findVertexByRoad(name);
 }
 
 int Interface::returnInt(string s1) {
@@ -364,6 +488,7 @@ double Interface::returnDouble(string s1) {
 
 	return tmp;
 }
+
 string Interface::returnInput(string s1, string s2) {
 	std::string tmp;
 	bool valido = true;
@@ -471,17 +596,18 @@ void Interface::departureRoads() {
 		RoadFinaly = returnInput("What is the Road finaly?",
 				"Introduce a valid name.");
 
-		if ((start = findRoad(Road(RoadInitial))) != NULL) {
+		if ((start = findRoad(RoadInitial)) != NULL) {
 
-			if ((end = findRoad(Road(RoadFinaly))) != NULL) {
+			if ((end = findRoad(RoadFinaly)) != NULL) {
 				cout << "Road start found! " << endl;
 				cout << "Road end found! " << endl;
 				flag = false;
 				break;
 			}
 
-		}
-		else
+		} else
 			cout << "Invalid information. Please try again." << endl;
 	}
 }
+
+//--------------------------------------------------------------------------------------------------------

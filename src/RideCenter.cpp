@@ -393,8 +393,27 @@ Vertex<Node,Road>* RideCenter::findVertex(Node n) const
 	return graph.getVertex(n);
 }
 
-Vertex<Node,Road>* RideCenter::findVertex(Road n) const
-{
-	return graph.getVertex(n);
+Vertex<Node,Road> *RideCenter::findVertexByRoad(string name) const{
+
+	Vertex<Node,Road> *v;
+	vector<Vertex<Node,Road> *> vertexs;
+
+	vertexs=graph.getVertexSet();
+
+	typename vector<Vertex<Node,Road> *>::iterator it = vertexs.begin();
+	typename vector<Vertex<Node,Road> *>::iterator ite = vertexs.end();
+
+	for(;it!=ite;it++)
+	{
+		v=*it;
+		for(unsigned int j=0;j<v->getAdj().size();j++)
+		{
+			string tmpName=v->getAdj()[j].getEdgeInfo().getName();
+			if(EditDistance(tmpName,name)==0)
+				return v;
+		}
+	}
+
+	return NULL;
 }
 

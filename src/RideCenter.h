@@ -8,6 +8,7 @@
 #include "User.h"
 #include "Adress.h"
 #include "GraphViewer.h"
+#include "StringSearch.h"
 
 /**
  * RideCenter-Class that represents all the logic of the program.
@@ -137,7 +138,7 @@ public:
  */
 	Vertex<Node,Road>* findVertex(Node n) const;
 
-	Vertex<Node,Road>* findVertex(Road n) const;
+	Vertex<Node,Road> *findVertexByRoad(string name) const;
 
 };
 
