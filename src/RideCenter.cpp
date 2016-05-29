@@ -409,7 +409,7 @@ Vertex<Node,Road> *RideCenter::findVertexByRoad(string name) const{
 		for(unsigned int j=0;j<v->getAdj().size();j++)
 		{
 			string tmpName=v->getAdj()[j].getEdgeInfo().getName();
-			if(EditDistance(tmpName,name)==0)
+			if(EditDistance(tmpName,name)==0 && kmp(tmpName,name)!=0 && tmpName.size()==name.size())
 				return v;
 		}
 	}

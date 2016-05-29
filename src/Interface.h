@@ -18,7 +18,7 @@ public:
   void newUser();
   void defineUserDeparture();
   void departure();
-  void departureRoads();
+  void defineRideFromOtherUser();
   Vertex<Node,Road> *findPlace(Node n) const;
   Vertex<Node,Road> * findRoad(string name) const;
   vector<User*> getUsers();
@@ -27,6 +27,7 @@ public:
   string returnInput(string s1,string s2);
   int selectMenu(char menor, char maior);
   User *findUser(string name,unsigned long ID) const;
+  User *findUser(string name,string road) const;
   vector<Node> SelectUsersForRide(Node Sourc,vector<Node> Positions,  Node Dest, unsigned int lot);
   double returnDouble(string s1);
 

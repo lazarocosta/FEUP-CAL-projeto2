@@ -1,7 +1,10 @@
 #ifndef SRC_USER_H_
 #define SRC_USER_H_
 
+#include <vector>
+
 #include "Adress.h"
+#include "Graph.h"
 
 using namespace std;
 /**
@@ -40,10 +43,22 @@ class User {
    * Private attribute that saves the number of passengers that the user can transport.
    */
   int numPassengers;
+  /**
+   * Path of the roads and nodes he will pass in case of a travel.
+   */
+  vector<Vertex<Node, Road> > path;
+  /**
+   * Users to give a ride.
+   */
+  vector <User*> usersToTakeRide;
 
 public:
   /**
    * Constructor that initialize all the private attributes.
+   */
+  User(string name, int age, Adress initAdress, Adress destAdress,int nP,vector<Vertex<Node, Road> > path);
+  /**
+   * Constructor that initialize all the private attributes except the path.
    */
   User(string name, int age, Adress initAdress, Adress destAdress,int nP);
   /**
@@ -96,6 +111,15 @@ public:
    */
   bool getWantDest() const;
   /**
+   * Getter responsible to return the path of the roads where user will pass.
+   * @return path.
+   */
+  vector<Vertex<Node, Road> > getUserPath() const;
+  /**
+   * Getter that returns the users that this user will give a ride.
+   */
+  vector <User*> getUsersToTakeRide() const;
+  /**
    * Set the initial hour.
    * @param h.
    */
@@ -115,6 +139,15 @@ public:
    * Function that reset the private attributes initAdress, destAdress, horaInit,horaFim and wantDest.
    */
   void resetUser();
+  /**
+   * Insert the path of the roads and nodes where the user will pass.
+   * @param path.
+   */
+  void insertPath(vector<Vertex<Node, Road> > path);
+  /**
+   * Push a new user to the vector that has all the users that will receive a ride from this user.
+   */
+  void pushToUsersToTakeRide(User *u);
   //--------------------------------------------------------------------------------------------------------
   /**
    * Function that prints the initial adress of the user.

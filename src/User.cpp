@@ -1,6 +1,16 @@
 #include "User.h"
 
 using namespace std;
+User::User(string name, int age, Adress initAdress, Adress destAdress,int nP,vector<Vertex<Node, Road> > path){
+	 this->name = name;
+	  this->age = age;
+	  this->initAdress = initAdress;
+	  this->destAdress = destAdress;
+	  this->numPassengers=nP;
+	  this->path=path;
+	  wantDest=true;
+}
+
 User::User(string name, int age, Adress initAdress, Adress destAdress,int nP) {
   this->name = name;
   this->age = age;
@@ -59,6 +69,14 @@ bool User::getWantDest() const{
 	return wantDest;
 }
 
+vector<Vertex<Node, Road> > User::getUserPath() const{
+	return path;
+}
+
+vector <User*> User::getUsersToTakeRide() const{
+	return usersToTakeRide;
+}
+
 void User::setHoraInit(string &h){
 	horaInit=h;
 }
@@ -79,6 +97,16 @@ void User::resetUser(){
 	wantDest=false;
 	numPassengers=0;
 	initAdress=destAdress;
+	path.clear();
+	usersToTakeRide.clear();
+}
+
+void User::insertPath(vector<Vertex<Node, Road> > path){
+	this->path=path;
+}
+
+void User::pushToUsersToTakeRide(User *u){
+	usersToTakeRide.push_back(u);
 }
 
 //------------------------------------------------------------------------------------------------
