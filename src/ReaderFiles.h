@@ -16,7 +16,7 @@ using namespace std;
 /**
  * ReadeFiles-Class responsible for read the files that contains the information of the nodes and the roads.
  */
-class ReaderFiles{
+class ReaderFiles {
 	/**
 	 * Private attribute which stores all the nodes.
 	 */
@@ -102,10 +102,8 @@ public:
 	 * @param lat.
 	 * @param lon.
 	 */
-	void updateLatsAndLons(double lat,double lon);
+	void updateLatsAndLons(double lat, double lon);
 
 };
-
-
 
 #endif

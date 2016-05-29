@@ -25,14 +25,16 @@ public:
 	 * Constructor of the class with no parameters.
 	 */
 	Road(){};
-	/**
-	 * Costructor of the class that only initialize the id of the road.
-	 * @param id.
-	 */
 
+	/*Construtor of the class that only inicialize the name of the Road
+	 * @param name
+	 */
 	Road(string name);
 
-
+	/**
+	 * Constructor of the class that only initialize the id of the road.
+	 * @param id.
+	 */
 	Road(unsigned long id);
 	/**
 	 * Constructor of the class that initialize all the private attributes.
