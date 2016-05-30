@@ -669,14 +669,7 @@ User *Interface::findUser(string name, unsigned long ID) const {
 User *Interface::findUser(string name, string road) const {
 
 	for (unsigned int i = 0; i < users.size(); i++) {
-		/*if (EditDistance(users[i]->getName(), name) == 0
-				&& kmp(users[i]->getName(), name) != 0)
-		{
-			/*if(EditDistance(users[i]->getUserAdress().getStreet().getName(),road)==0 &&
-					kmp(users[i]->getUserAdress().getStreet().getName(),road)!=0
-					&& users[i]->getUserAdress().getStreet().getName().size()==road.size())*/
-
-		if(users[i]->getName() == name && kmp(users[i]->getName(),name)!= 0)
+		if(users[i]->getName().size() == name.size() && kmp(users[i]->getName(),name)!= 0)
 			if(users[i]->getUserAdress().getStreet().getName() == road)
 			{
 				return users[i];
@@ -874,6 +867,7 @@ void Interface::RideUserbyName()
 
 		if(inTheWay)
 		{
+			UserF->setDestAdress(Pilot->getUserDestination().getLocal(),Pilot->getUserDestination().getStreet());
 			Pilot->pushToUsersToTakeRide(UserF);
 			cout << "Ride Added " << endl;
 			displayMenu();
