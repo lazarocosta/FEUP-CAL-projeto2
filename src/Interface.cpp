@@ -676,7 +676,7 @@ User *Interface::findUser(string name, string road) const {
 					kmp(users[i]->getUserAdress().getStreet().getName(),road)!=0
 					&& users[i]->getUserAdress().getStreet().getName().size()==road.size())*/
 
-		if(users[i]->getName() == name && kmp(users[i]->getName(),name))
+		if(users[i]->getName() == name && kmp(users[i]->getName(),name)!= 0)
 			if(users[i]->getUserAdress().getStreet().getName() == road)
 			{
 				return users[i];
