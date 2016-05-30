@@ -14,11 +14,12 @@ void Interface::displayMenu() {
 	cout << "1-Insert new user." << endl;
 	cout << "2-See all users." << endl;
 	cout << "3-User select a ride from other user by road." << endl;
-	cout << "4-User information departure." << endl;
-	cout << "5-Departure." << endl;
-	cout << "6-Exit." << endl;
+	cout << "4-User select a ride from other user by username" << endl;
+	cout << "5-User information departure." << endl;
+	cout << "6-Departure." << endl;
+	cout << "7-Exit." << endl;
 
-	option = selectMenu('1', '6');
+	option = selectMenu('1', '7');
 
 	option -= '0';
 
@@ -28,11 +29,13 @@ void Interface::displayMenu() {
 		displayUsers();
 	else if (option == 3)
 		defineRideFromOtherUser();
-	else if (option == 4)
-		defineUserDeparture();
+	else  if(option == 4)
+		RideUserbyName();
 	else if (option == 5)
-		departure();
+		defineUserDeparture();
 	else if (option == 6)
+		departure();
+	else if (option == 7)
 		return;
 	else
 		displayMenu();
@@ -88,7 +91,7 @@ void Interface::newUser() {
 
 	name = returnInput("Name: ", "Introduce a valid name");
 
-	age = returnInt("Age: ");
+	//age = returnInt("Age: ");
 
 	while (selectMode != "road" && selectMode != "node") {
 		cout << "Choose adress by road or node ? [road/node]" << endl;
@@ -105,8 +108,9 @@ void Interface::newUser() {
 
 			RoadInitial = returnInput("What is the Road initial?",
 					"Introduce a valid name.");
-
+			cout << RoadInitial << endl;
 			if ((start = findRoad(RoadInitial)) != NULL) {
+				cout << start->getAdj()[0].getEdgeInfo().getName() << endl;
 				cout << "Road Found!" << endl;
 				break;
 
@@ -133,7 +137,7 @@ void Interface::newUser() {
 		if (choice == "yes") {
 			i = 0;
 
-			while (true) {
+		/*	while (true) {
 				std::cin.clear();
 				std::cin.ignore(1000, '\n');
 				hI = returnInput("Hour to departure ?",
@@ -148,7 +152,7 @@ void Interface::newUser() {
 					cout
 							<< "Not a possible choice. Please choose the hours again."
 							<< endl;
-			}
+			}*/
 
 			numP = returnInt("How many passengers can you transport ?");
 
@@ -172,6 +176,8 @@ void Interface::newUser() {
 
 			vector<Node> passP;
 			vector<Vertex<Node, Road> > path;
+
+			center.centerGraph(start->getInfo());
 
 			path = center.BestPath(aInit.getLocal(), aDest.getLocal(), passP);
 
@@ -414,18 +420,18 @@ void Interface::defineUserDeparture() {
 
 void Interface::departure() {
 	string name;
-	unsigned long ID;
+	string  roadSourc;
 	vector<Node> passPoints;
 	bool flag = true;
 	User *u;
 
 	while (flag) {
 		name = returnInput("What is the user ?", "Introduce a valid name.");
-		ID = returnDouble("What is the user place ID ?");
+		roadSourc = returnInput("Road name ?", " Write a valid Road");
 
-		while ((u = findUser(name, ID)) == NULL) {
+		while ((u = findUser(name, roadSourc)) == NULL) {
 			name = returnInput("What is the user ?", "Introduce a valid name.");
-			ID = returnDouble("What is the user place ID ?");
+			roadSourc = returnInput("Departure location? ","Not a valid option");
 		}
 
 		if (!u->getWantDest()) {
@@ -439,38 +445,21 @@ void Interface::departure() {
 			cout << "Invalid information. Please try again." << endl;
 	}
 
-	for (unsigned int i = 0; i < users.size(); i++) {
-		if (users[i] != u && users[i]->getWantDest()
-				&& users[i]->getNumPassegers() == 0) {
-			User *temp = users[i];
-			if (temp->getHoraInit() > u->getHoraInit()
-					&& temp->getHoraFim() == u->getHoraFim()
-					&& users[i]->getUserDestination().getLocal()
-							== u->getUserDestination().getLocal()) {
-				if (center.in_elipse(u->getUserAdress().getLocal(),
-						u->getUserDestination().getLocal(),
-						users[i]->getUserAdress().getLocal())) {
-					passPoints.push_back(users[i]->getUserAdress().getLocal());
-
-				}
-			}
-		}
-
-	}
-	vector<Node> PickedUsers = SelectUsersForRide(u->getUserAdress().getLocal(),
-			passPoints, u->getUserDestination().getLocal(),
-			u->getNumPassegers());
-	vector<Vertex<Node, Road> > teste = center.BestPath(
-			u->getUserAdress().getLocal(), u->getUserDestination().getLocal(),
-			passPoints);
-
-
-
+	vector<Vertex<Node, Road> > teste = u->getUserPath();
+	teste.push_back(*(center.findVertex(u->getUserAdress().getLocal())));
 	center.displayGraph(teste);
 
+	for(int i = 0; i < u->getUsersToTakeRide().size(); i++)
+	{
+		u->getUsersToTakeRide()[i]->resetUser();
+	}
+	u->resetUser();
+
+	//Apagar Registo
 	getchar();
 
 	displayMenu();
+	return;
 
 }
 
@@ -527,9 +516,10 @@ void Interface::defineRideFromOtherUser(){
 		vector<Vertex<Node,Road> > path=users[i]->getUserPath();
 		for(unsigned int j=0;j<path.size();j++)
 		{
-			if(EditDistance(path[j].getAdj()[0].getEdgeInfo().getName(),RoadChoose)==0
+			/*if(EditDistance(path[j].getAdj()[0].getEdgeInfo().getName(),RoadChoose)==0
 					&& kmp(path[j].getAdj()[0].getEdgeInfo().getName(),RoadChoose)!=0
-					&& path[j].getAdj()[0].getEdgeInfo().getName().size()==RoadChoose.size())
+					&& path[j].getAdj()[0].getEdgeInfo().getName().size()==RoadChoose.size())*/
+			if(path[j].getAdj()[0].getEdgeInfo().getName() == RoadChoose)
 			{
 				users[i]->pushToUsersToTakeRide(u);
 				isInPath=true;
@@ -679,16 +669,20 @@ User *Interface::findUser(string name, unsigned long ID) const {
 User *Interface::findUser(string name, string road) const {
 
 	for (unsigned int i = 0; i < users.size(); i++) {
-		if (EditDistance(users[i]->getName(), name) == 0
+		/*if (EditDistance(users[i]->getName(), name) == 0
 				&& kmp(users[i]->getName(), name) != 0)
 		{
-			if(EditDistance(users[i]->getUserAdress().getStreet().getName(),road)==0 &&
+			/*if(EditDistance(users[i]->getUserAdress().getStreet().getName(),road)==0 &&
 					kmp(users[i]->getUserAdress().getStreet().getName(),road)!=0
-					&& users[i]->getUserAdress().getStreet().getName().size()==road.size()){
+					&& users[i]->getUserAdress().getStreet().getName().size()==road.size())*/
+
+		if(users[i]->getName() == name && kmp(users[i]->getName(),name))
+			if(users[i]->getUserAdress().getStreet().getName() == road)
+			{
 				return users[i];
 			}
 		}
-	}
+
 
 	return NULL;
 }
@@ -725,4 +719,172 @@ vector<Node> Interface::SelectUsersForRide(Node Sourc, vector<Node> Positions,
 	return Picked;
 }
 
+void Interface::RideUserbyName()
+{
+
+	string UserName , RoadSourc,  FriendName;
+	bool foundFriend = false;
+	bool foundUser = false;
+	User *UserF;
+	User *Friend;
+	if (users.size() == 0) {
+			cout << "No users." << endl;
+			displayMenu();
+		}
+
+		bool existsClientWithCar=false;
+
+		for(unsigned int i=0;i<users.size();i++)
+		{
+			if(users[i]->getWantDest())
+			{
+				existsClientWithCar=true;
+				break;
+			}
+		}
+
+		if(!existsClientWithCar)
+		{
+			cout << "No users with a car to give you a ride." << endl;
+			displayMenu();
+			return;
+		}
+
+
+		do{
+			UserName = returnInput("Username? ", "Invalid option");
+			RoadSourc = returnInput("Road of departure? ","Invalid option");
+
+			UserF = findUser(UserName,RoadSourc);
+
+			if(UserF == NULL)
+			{
+				cout << "User doesn´t exist!" << endl;
+				displayMenu();
+				return;
+			}
+			else
+			{
+				foundUser = true;
+				cout << "Hi" << UserF->getName()<< "!" << endl;
+			}
+
+		}while(!foundUser);
+
+
+		do{
+
+			FriendName = returnInput("Friend name? ", "Invalid option");
+			RoadSourc  = returnInput("Friend departure location? ", "Invalid option");
+
+			Friend = findUser(FriendName,RoadSourc);
+
+			if(Friend == NULL)
+			{
+				cout << "Uhhhhh..... I didn´t find yout friend ....  :( " << endl;
+			}
+			else
+			{
+				cout << "I found your friend :) " <<  endl;
+				foundFriend = true;
+			}
+		}while(!foundFriend);
+
+
+
+		User *Pilot;
+
+
+		if(Friend->getWantDest())
+		{
+			cout << "Your friend will drive " << endl;
+			 Pilot = Friend;
+		}
+		else
+		{
+			bool foundPilot = false;
+			for(int i = 0; i < users.size();i++)
+			{
+				if(users[i]->getWantDest())
+				{
+					vector <User*> Rides = users[i]->getUsersToTakeRide();
+					for(int j = 0; j < Rides.size(); j++)
+					{
+						if(Rides[j]->getName() == Friend->getName() &&
+						   Rides[j]->getUserAdress().getStreet() == Friend->getUserAdress().getStreet())
+						{
+							Pilot = Rides[j];
+							foundPilot = true;
+							break;
+						}
+
+					}
+				}
+				if(foundPilot)
+					break;
+			}
+
+			if(!foundPilot)
+			{
+				cout << "Your friend doesn´t have a ride....." << endl;
+				displayMenu();
+				return;
+			}
+		}
+
+
+		if(Pilot == NULL)
+		{
+			cout << "No Pilot ...." << endl;
+			displayMenu();
+			return;
+		}
+
+
+
+		if(Pilot->getNumPassegers() > Pilot->getUsersToTakeRide().size())
+		{
+			cout << "The car have  free space for you !" << endl;
+		}
+		else{
+			cout << "Sorry but the car is full! "<< endl;
+			displayMenu();
+			return;
+		}
+
+
+		bool inTheWay = false;
+
+		vector<Vertex<Node, Road> > Path = Pilot->getUserPath();
+		Path.push_back(*(center.findVertex(Pilot->getUserAdress().getLocal())));
+		cout << Path.size() << endl;
+		for(int i = 0;i < Path.size(); i++)
+		{
+			int size = Path[i].getAdj().size();
+			for(int j = 0; j < size; j++)
+			{if(Path[i].getAdj()[j].getEdgeInfo().getName() == RoadSourc)
+			{
+				inTheWay = true;
+				break;
+			}
+			//cout << Path[i].getAdj()[j].getEdgeInfo().getName() << endl;
+			}
+
+		}
+
+		if(inTheWay)
+		{
+			Pilot->pushToUsersToTakeRide(UserF);
+			cout << "Ride Added " << endl;
+			displayMenu();
+			return;
+		}
+		else
+		{
+			cout << "Sorry Pilot can't pick you  ..... MUAHAHAHAHAH " << endl;
+			displayMenu();
+			return;
+		}
+
+}
 //--------------------------------------------------------------------------------------------------------

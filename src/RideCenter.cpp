@@ -403,16 +403,36 @@ Vertex<Node,Road> *RideCenter::findVertexByRoad(string name) const{
 	typename vector<Vertex<Node,Road> *>::iterator it = vertexs.begin();
 	typename vector<Vertex<Node,Road> *>::iterator ite = vertexs.end();
 
+	int BestMatch = 9999;
+	Vertex<Node,Road> *BM;
+
 	for(;it!=ite;it++)
 	{
 		v=*it;
-		for(unsigned int j=0;j<v->getAdj().size();j++)
+		/*for(unsigned int j=0;j<v->getAdj().size();j++)
 		{
 			string tmpName=v->getAdj()[j].getEdgeInfo().getName();
 			if(EditDistance(tmpName,name)==0 && kmp(tmpName,name)!=0 && tmpName.size()==name.size())
 				return v;
+		}*/
+		if(v->getAdj().size() > 0){
+		string tmpName=v->getAdj()[0].getEdgeInfo().getName();
+		if(EditDistance(tmpName,name)==0 && kmp(tmpName,name)!=0 && tmpName.size()==name.size())
+				return v;
+
+		string tmpName=v->getAdj()[0].getEdgeInfo().getName();
+		int con;
+		if((con = EditDistance(tmpName,name)) < BestMatch)
+		{
+			BestMatch = con;
+			BM = v;
+		}
+
+
 		}
 	}
+
+	cout << "Didn't mean " << BM->getAdj()[0].getEdgeInfo().getName() << endl;
 
 	return NULL;
 }
