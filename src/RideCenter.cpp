@@ -422,6 +422,7 @@ Vertex<Node,Road> *RideCenter::findVertexByRoad(string name) const{
 
 	Vertex<Node,Road> *v;
 	vector<Vertex<Node,Road> *> vertexs;
+	int con;
 
 	vertexs=graph.getVertexSet();
 
@@ -434,20 +435,14 @@ Vertex<Node,Road> *RideCenter::findVertexByRoad(string name) const{
 	for(;it!=ite;it++)
 	{
 		v=*it;
-		/*for(unsigned int j=0;j<v->getAdj().size();j++)
-		{
-			string tmpName=v->getAdj()[j].getEdgeInfo().getName();
-			if(EditDistance(tmpName,name)==0 && kmp(tmpName,name)!=0 && tmpName.size()==name.size())
-				return v;
-		}*/
 		if(v->getAdj().size() > 0){
 		string tmpName=v->getAdj()[0].getEdgeInfo().getName();
-		if(EditDistance(tmpName,name)==0 && kmp(tmpName,name)!=0 && tmpName.size()==name.size())
+		if(kmp(tmpName,name)!=0 && tmpName.size()==name.size())
 				return v;
 
 	 tmpName=v->getAdj()[0].getEdgeInfo().getName();
-		int con;
-		if((con = EditDistance(tmpName,name)) < BestMatch)
+	 con = EditDistance(tmpName,name);
+		if(con < BestMatch)
 		{
 			BestMatch = con;
 			BM = v;

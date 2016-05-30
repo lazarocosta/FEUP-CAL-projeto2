@@ -28,7 +28,7 @@ void Interface::displayMenu() {
 	else if (option == 2)
 		displayUsers();
 	else if (option == 3)
-		defineRideFromOtherUser();
+		defineRideFromOtherUserByRoad();
 	else  if(option == 4)
 		RideUserbyName();
 	else if (option == 5)
@@ -463,7 +463,7 @@ void Interface::departure() {
 
 }
 
-void Interface::defineRideFromOtherUser(){
+void Interface::defineRideFromOtherUserByRoad(){
 
 	if (users.size() == 0) {
 		cout << "No users." << endl;
@@ -488,14 +488,14 @@ void Interface::defineRideFromOtherUser(){
 	}
 
 	string name;
-	string RoadChoose;
+	string RoadChoose,RoadDest;
 	bool flag=true;
 	bool isInPath=false;
 	unsigned int i;
 	User *u;
 
 	while (flag) {
-		name = returnInput("What is the user name ?",
+		name = returnInput("What is your name ?",
 				"Introduce a valid name.");
 
 		RoadChoose = returnInput("What is the road of your adress ?",
@@ -505,21 +505,17 @@ void Interface::defineRideFromOtherUser(){
 			flag=false;
 	}
 
-	if(!u->getWantDest())
-	{
-		cout << "User won't give a ride." << endl;
-		displayMenu();
-	}
+	RoadDest = returnInput("What is the road of your destiny ?","Introduce a valid name.");
+
 
 	for(i=0;i<users.size();i++)
 	{
 		vector<Vertex<Node,Road> > path=users[i]->getUserPath();
 		for(unsigned int j=0;j<path.size();j++)
 		{
-			/*if(EditDistance(path[j].getAdj()[0].getEdgeInfo().getName(),RoadChoose)==0
-					&& kmp(path[j].getAdj()[0].getEdgeInfo().getName(),RoadChoose)!=0
-					&& path[j].getAdj()[0].getEdgeInfo().getName().size()==RoadChoose.size())*/
-			if(path[j].getAdj()[0].getEdgeInfo().getName() == RoadChoose)
+			string tmpRoad=path[j].getAdj()[0].getEdgeInfo().getName();
+			if(kmp(tmpRoad,RoadChoose)!=0
+					&& tmpRoad.size()==RoadChoose.size() && RoadDest==users[i]->getUserDestination().getStreet().getName())
 			{
 				users[i]->pushToUsersToTakeRide(u);
 				isInPath=true;
@@ -533,13 +529,17 @@ void Interface::defineRideFromOtherUser(){
 
 	if(isInPath)
 	{
+		Node tmpNode=users[i]->getUserDestination().getLocal();
+		Road tmpRoad=users[i]->getUserDestination().getStreet();
+
+		u->setDestAdress(tmpNode,tmpRoad);
+
 		cout << "Find a user. You will take a ride with Mr/Mrs " << users[i]->getName() << "." << endl;
 	}
 	else
-		cout << "Can't find a user that passes im your actual road." << endl;
+		cout << "Can't find a user that passes in your actual road." << endl;
 
 	displayMenu();
-
 }
 
 Vertex<Node, Road> *Interface::findPlace(Node n) const {

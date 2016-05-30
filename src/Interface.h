@@ -18,7 +18,7 @@ public:
   void newUser();
   void defineUserDeparture();
   void departure();
-  void defineRideFromOtherUser();
+  void defineRideFromOtherUserByRoad();
   Vertex<Node,Road> *findPlace(Node n) const;
   Vertex<Node,Road> * findRoad(string name) const;
   vector<User*> getUsers();

@@ -10,7 +10,7 @@ int main() {
 
 	Interface cli=Interface(r);
 
-	//cli.displayMenu();
+	cli.displayMenu();
 	RideCenter center = RideCenter(r);
 
 	//cout << "PRINT GRAPH" << endl;
