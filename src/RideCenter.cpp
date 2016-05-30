@@ -279,6 +279,7 @@ void RideCenter::displayGraph(vector<Vertex<Node, Road> > passNodes) {
 
 
 		unsigned long ID = getEdgeID(it->getNode1ID(), it->getNode2ID());
+		string name = getEdgeName(it->getNode1ID(), it->getNode2ID());
 		if (ID == 0) {
 			cout << "NAO DESENHOU ARESTA" << endl;
 			continue;
@@ -292,6 +293,9 @@ void RideCenter::displayGraph(vector<Vertex<Node, Road> > passNodes) {
 			gv->addEdge(ID, it->getNode1ID(), it->getNode2ID(),
 					EdgeType::DIRECTED);
 		}
+
+		gv->setEdgeLabel(ID, name);
+
 	}
 
 	// CHANGE PATH NODES COLOR
@@ -387,6 +391,27 @@ unsigned long RideCenter::getEdgeID(unsigned long id_sourc,
 }
 
 
+string RideCenter::getEdgeName(unsigned long id_sourc, unsigned long id_dest) {
+	Node Sourc = FindNode(id_sourc);
+
+	if (Sourc.getID() == 0) {
+		return 0;
+	}
+
+	vector<Edge<Node, Road> > edges = graph.getVertex(Sourc)->getAdj();
+
+	vector<Edge<Node, Road> >::iterator it = edges.begin();
+	vector<Edge<Node, Road> >::iterator ite = edges.end();
+
+	for (; it != ite; it++) {
+		if (it->getDest()->getInfo().getID() == id_dest)
+			return it->getEdgeInfo().getName();
+	}
+
+	return NULL;
+}
+
+
 
 Vertex<Node,Road>* RideCenter::findVertex(Node n) const
 {
@@ -420,7 +445,7 @@ Vertex<Node,Road> *RideCenter::findVertexByRoad(string name) const{
 		if(EditDistance(tmpName,name)==0 && kmp(tmpName,name)!=0 && tmpName.size()==name.size())
 				return v;
 
-		string tmpName=v->getAdj()[0].getEdgeInfo().getName();
+	 tmpName=v->getAdj()[0].getEdgeInfo().getName();
 		int con;
 		if((con = EditDistance(tmpName,name)) < BestMatch)
 		{

@@ -10,7 +10,7 @@ int main() {
 
 	Interface cli=Interface(r);
 
-	cli.displayMenu();
+	//cli.displayMenu();
 	RideCenter center = RideCenter(r);
 
 	//cout << "PRINT GRAPH" << endl;
@@ -37,7 +37,7 @@ int main() {
 	//Pontos_interesse.push_back(center.FindNode(452682268));
 			//NAO TEM A LOTAÇAO A FUNCIONAR
 			vector<Vertex<Node, Road> > teste = center.BestPath(temp, temp2,
-					Pontos_interesse, 0);
+					Pontos_interesse);
 
 			center.displayGraph(teste);
 
@@ -49,8 +49,8 @@ int main() {
 				it++;
 			}
 
-			getchar();
-*/
+			getchar();*/
+
 	return 0;
 }
 

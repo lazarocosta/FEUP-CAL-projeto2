@@ -136,6 +136,8 @@ public:
 	 */
 	unsigned long getEdgeID(unsigned long id_sourc, unsigned long id_dest);
 
+	string getEdgeName(unsigned long id_sourc, unsigned long id_dest);
+
 	/**
 	 * Returns a vertex of the graph
 	 * @param n
